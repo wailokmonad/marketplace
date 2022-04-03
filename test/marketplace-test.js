@@ -241,12 +241,14 @@ describe('Marketplace Contract', function () {
       await marketplace.cancelOffer(0);
       let obj = await marketplace.offer(0)
       expect(obj[6]).to.equal(true); 
+      expect( await token721.ownerOf(1) ).to.equal(owner.address); 
     });
 
     it("Should cancel the 1155 offer", async function () {
       await marketplace.connect(addr5).cancelOffer(1);
       let obj = await marketplace.offer(1)
       expect(obj[6]).to.equal(true); 
+      expect( await token1155.balanceOf(addr5.address, 5) ).to.equal(50); 
     });
 
 

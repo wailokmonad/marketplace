@@ -88,7 +88,7 @@ contract Token721 is ERC721, ERC721Enumerable, Ownable, AccessControl {
     /**
      * @dev get _tokenIdTracker.
      */
-    function getTokenIdTracker() public view returns (uint) {
+    function getTokenIdTracker() external view returns (uint) {
         return _tokenIdTracker.current();
     }
 
@@ -115,7 +115,7 @@ contract Token721 is ERC721, ERC721Enumerable, Ownable, AccessControl {
     * @dev Add an account to the admin role. Restricted to admins.
     * @param _account address from the account to add
     */   
-    function addAdmin(address _account) public virtual onlyOwner {
+    function addAdmin(address _account) external virtual onlyOwner {
         grantRole(DEFAULT_ADMIN_ROLE, _account);
     }
 
@@ -123,7 +123,7 @@ contract Token721 is ERC721, ERC721Enumerable, Ownable, AccessControl {
     * @dev Remove an account from the admin role. Restricted to admins.
     * @param _account address from the account to add
     */  
-    function removeAdmin(address _account) public virtual onlyOwner {
+    function removeAdmin(address _account) external virtual onlyOwner {
         revokeRole(DEFAULT_ADMIN_ROLE, _account);
     }
     

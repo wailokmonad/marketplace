@@ -29,7 +29,7 @@ contract Token1155 is ERC1155, Ownable, AccessControl {
     * @param _receiver address of the receiver
     * @param _amount the amount of token to be minted
     */  
-    function mintTo(uint _id, address _receiver, uint _amount) public onlyMinter {
+    function mintTo(uint _id, address _receiver, uint _amount) external onlyMinter {
         _mint(_receiver, _id, _amount, "");
     }
 
@@ -40,7 +40,7 @@ contract Token1155 is ERC1155, Ownable, AccessControl {
     * @param _receiver address of the receiver
     * @param _amounts the array of amount of token to be minted
     */  
-    function batchMintTo(address _receiver, uint256[] memory _ids, uint256[] memory _amounts) public onlyMinter {
+    function batchMintTo(address _receiver, uint256[] memory _ids, uint256[] memory _amounts) external onlyMinter {
         _mintBatch(_receiver, _ids, _amounts, "");
     }
 
@@ -58,7 +58,7 @@ contract Token1155 is ERC1155, Ownable, AccessControl {
      * @dev set the url
      * @param _newuri the url string
      */
-    function setURI(string memory _newuri) public onlyMinter {
+    function setURI(string memory _newuri) external onlyMinter {
         _setURI(_newuri);
     }
 
@@ -74,7 +74,7 @@ contract Token1155 is ERC1155, Ownable, AccessControl {
     * @dev Add an account to the admin role. Restricted to admins.
     * @param _account address from the account to add
     */   
-    function addAdmin(address _account) public virtual onlyOwner {
+    function addAdmin(address _account) external virtual onlyOwner {
         grantRole(DEFAULT_ADMIN_ROLE, _account);
     }
 
@@ -82,7 +82,7 @@ contract Token1155 is ERC1155, Ownable, AccessControl {
     * @dev Remove an account from the admin role. Restricted to admins.
     * @param _account address from the account to add
     */  
-    function removeAdmin(address _account) public virtual onlyOwner {
+    function removeAdmin(address _account) external virtual onlyOwner {
         revokeRole(DEFAULT_ADMIN_ROLE, _account);
     }
 

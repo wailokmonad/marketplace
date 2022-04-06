@@ -126,7 +126,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
      * @dev edit the offer
      * @param _offerId the offer Id
      **/
-    function editOffer ( uint _offerId, uint _price ) public 
+    function editOffer ( uint _offerId, uint _price ) external 
         isValidOffer(_offerId)
         notZeroAmount(_price)
         whenNotPaused
@@ -139,6 +139,9 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
     }
 
 
+    
+
+
     /**
      * @dev offer the nft for sales
      * @param _tokenAddress token address
@@ -146,7 +149,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
      * @param _amount the amount. It has to be 1 in the case of ERC721
      * @param _price the selling price
      **/
-    function newOffer ( address _tokenAddress, uint _tokenId, uint _amount, uint _price ) public 
+    function newOffer ( address _tokenAddress, uint _tokenId, uint _amount, uint _price ) external 
         notZeroAddress(_tokenAddress) 
         notZeroAmount(_amount)
         notZeroAmount(_price)
@@ -177,12 +180,11 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
 
     }
 
-
     /**
      * @dev buy NFT
      * @param _offerId the offer Id
      **/
-    function buy( uint _offerId ) public 
+    function buy( uint _offerId ) external 
         isValidOffer(_offerId)
         nonReentrant
         whenNotPaused
@@ -213,7 +215,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
      * @dev cancel an offer
      * @param _offerId the offer Id
      **/
-    function cancelOffer( uint _offerId ) public 
+    function cancelOffer( uint _offerId ) external 
         isValidOffer(_offerId)
         nonReentrant
     { 
@@ -238,7 +240,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
     /**
      * @dev withdraw platform commission, callable only by admin
      **/
-    function withdrawCommission() public onlyAdmin { 
+    function withdrawCommission() external onlyAdmin { 
         require( address(this).balance > 0, "Marketplace::withdrawCommission: No balance");
         payable(_msgSender()).transfer( address(this).balance );
     }
@@ -246,7 +248,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
      /**
      * @dev return the current platform commission, callable only by admin
      **/
-    function commission() public onlyAdmin virtual view returns (uint) { 
+    function commission() external onlyAdmin virtual view returns (uint) { 
         return address(this).balance;
     }
 
@@ -263,7 +265,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
     * @dev Add an account to the admin role. Restricted to admins.
     * @param _account address from the account to add
     */   
-    function addAdmin(address _account) public virtual onlyOwner {
+    function addAdmin(address _account) external virtual onlyOwner {
         grantRole(DEFAULT_ADMIN_ROLE, _account);
     }
 
@@ -271,10 +273,9 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
     * @dev Remove an account from the admin role. Restricted to admins.
     * @param _account address from the account to add
     */  
-    function removeAdmin(address _account) public virtual onlyOwner {
+    function removeAdmin(address _account) external virtual onlyOwner {
         revokeRole(DEFAULT_ADMIN_ROLE, _account);
     }
-
 
     /**
      * @dev Triggers stopped state.

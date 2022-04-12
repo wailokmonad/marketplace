@@ -11,6 +11,10 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import '@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol';
 import '@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol';
 
+interface IMarketplaceV2 {
+    function offerMigrateFromV1 (address _owner, bool _isERC721, address _tokenAddress, uint _tokenId, uint _amount, uint _price ) external returns (uint);
+}
+
 contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC1155Holder, ERC721Holder {
 
     bytes4 private constant _INTERFACE_ID_ERC721 = 0x80ac58cd;
@@ -155,6 +159,7 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
         notZeroAmount(_price)
         nonReentrant
         whenNotPaused
+        returns (uint)
     { 
 
         bool _isERC721 = IERC721(_tokenAddress).supportsInterface(_INTERFACE_ID_ERC721);
@@ -177,6 +182,8 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
         }) );
 
         emit NewOfferAdded( _offer.length - 1 );
+
+        return _offer.length - 1;
 
     }
 
@@ -236,6 +243,35 @@ contract Marketplace is Ownable, AccessControl, ReentrancyGuard, Pausable, ERC11
         emit OfferCancelled( _offerId );
 
     }
+
+
+    /**
+     * @dev For existing users to migrate the NFT and offer data to V2
+     * @param _offerId the offer Id
+     * @param _V2Address the V2 address
+     **/
+    function migrateToV2 ( uint _offerId, address _V2Address ) external 
+        isValidOffer(_offerId)
+        nonReentrant
+        returns (uint)
+    { 
+        Offer storage obj = _offer[_offerId];
+
+        require(obj.owner == _msgSender(), "Marketplace::migrateToV2: Not the owner");
+        require(obj.sold == false, "Marketplace::migrateToV2: Already sold");
+
+        obj.sold = true;
+
+        if (obj.isERC721) {
+			IERC721(obj.tokenAddress).safeTransferFrom(address(this), _V2Address, obj.tokenId);
+		} else {
+			IERC1155(obj.tokenAddress).safeTransferFrom(address(this), _V2Address, obj.tokenId, obj.amount, '0x0');
+		}
+
+        return IMarketplaceV2(_V2Address).offerMigrateFromV1(obj.owner, obj.isERC721, obj.tokenAddress, obj.tokenId, obj.amount, obj.price);
+
+    }
+
 
     /**
      * @dev withdraw platform commission, callable only by admin
